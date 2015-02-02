@@ -63,7 +63,7 @@ def mcrp(n, conn, network):
             cmd.send('done')
             break
         elif act == "Init":        
-            gamma, _x=KeyGen()
+            gamma, _x = KeyGen()
             c = [GroupElement((1+m)**2, H) for m in range(M)]
             rand_a = (Rand(G) for m in range(M))
             D_0 = [(a**t, Enc(a, _x, gamma)) for a,t in zip(rand_a, c)]
@@ -91,7 +91,7 @@ def mcrp(n, conn, network):
             m = Open(D[m0][1], c, D_INFO[m0], _x, gamma)
             
         else:
-            print "Unknown action", act        
+            print("Unknown action", act)        
         cmd.send('done')
              
 N, M, K=9, 52, 4

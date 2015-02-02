@@ -5,14 +5,14 @@ from random import shuffle
 from zk import zk
 from basic_protocol import basic_protocol
 
-q=mpz(open("prime1024.txt").read())
+#q = mpz(open("prime1024.txt").read())
 #q=mpz(open("prime.txt").read())
-#q=mpz(100012421)
-G, H=Group(q*2+1), Group(q) # G and H are global variables
+q=mpz(100012421)
+G, H = Group(q*2+1), Group(q) # G and H are global variables
        
 def new_mp(n, conn, network):
-    reset_rs()    
-    cmd=conn[n]
+    reset_rs()
+    cmd = conn[n]
     send, recv, send_recv, broadcast = LoadFuncs(
         network, 'send', 'recv', 'send_recv', 'broadcast')
 
@@ -47,7 +47,7 @@ def new_mp(n, conn, network):
             assert all(e[N-1][m] == D_0[m][0]**l1 * D_0[m][1]**l2 * gp for m in range(M))
         return (l1, l2, l3)
 
-    def Wrap_B0():        
+    def Wrap_B0():
         _u, _v = [H.random_index() for k in range(K)], [H.random_index() for k in range(K)]
         a, b = prod(f0[k]**_u[k] for k in range(K)), prod(f0[k]**_v[k] for k in range(K))        
         alpha_beta = [broadcast((a, b)) if n==n2 else recv(n2) for n2 in range(N)]
@@ -68,12 +68,15 @@ def new_mp(n, conn, network):
             assert delta == (a,b)            
         return u, v
             
-    def star( (y,z,w), ((a,ab,b,e),f) ):
+    def star(xxx_todo_changeme, xxx_todo_changeme1 ):
+        (y, z, w) = xxx_todo_changeme
+        ((a, ab, b, e), f) = xxx_todo_changeme1
         p1 = (a**(y*delta[0]**w), ab**(y*delta[1]**w), b**(y*z), e**y)        
         p2 = tuple(x[0]*x[1]**w for x in zip(f,f0))
         return (p1, p2)
 
-    def Wrap_B((D_A, g0)):        
+    def Wrap_B(xxx_todo_changeme2):        
+        (D_A, g0) = xxx_todo_changeme2
         h0 = [GroupElement(1, H) for k in range(K)]
         D0=[((a,a*b,b,e), h0) for (a,b,e) in D_A]
         D, g = D0, g0
@@ -118,7 +121,8 @@ def new_mp(n, conn, network):
         D = [star((_y, h, w[_pi[m]]), D[_pi[m]]) for m in range(M)]
         return D, _y, _pi
     
-    def Shuffle_Main((D, g)):
+    def Shuffle_Main(xxx_todo_changeme3):
+        (D, g) = xxx_todo_changeme3
         Main_history = []
         for n2 in range(N):
             last_g = g
@@ -149,18 +153,21 @@ def new_mp(n, conn, network):
         Z = Check_Secrets_B(yzw, B_history)
         return l, u, v, Z
 
-    def Unwrap_A((a,b,e), gp, l):
+    def Unwrap_A(xxx_todo_changeme4, gp, l):
+        (a,b,e) = xxx_todo_changeme4
         assert a**l[0] * b**l[1] * gp == e
         return (a,b)
     
-    def Unwrap_B( ((a,ab,b,e), f), Zi, u, v):
+    def Unwrap_B(xxx_todo_changeme5, Zi, u, v):
+        ((a,ab,b,e), f) = xxx_todo_changeme5
         Ui = prod(f[k]**u[k] for k in range(K)).invert()
         V = prod(f[k]**v[k] for k in range(K))
         ra, rb = a**Ui, b**Zi
         assert (ra*rb)**V == ab
         return (ra,rb,e)
     
-    def Unwrap_Check_Deck( (DB, g), Z, u, v, l):
+    def Unwrap_Check_Deck(xxx_todo_changeme6, Z, u, v, l):
+        (DB, g) = xxx_todo_changeme6
         Zi = Z.invert() # Zi is Z^-1
         DA = [Unwrap_B(d, Zi, u,v) for d in DB]
         # check 'e elements' are distinct
@@ -175,11 +182,11 @@ def new_mp(n, conn, network):
             break
         
         elif act == "Init":        
-            gamma, _x=KeyGen()
+            gamma, _x = KeyGen()
             c = [GroupElement((1+m)**2, H) for m in range(M)]
             rand_a = (Rand(G) for m in range(M))
-            D_0 = [(a**t, Enc(a, _x, gamma)) for a,t in zip(rand_a, c)]
-            f0=[Rand(H) for k in range(K)]
+            D_0 = [(a**t, Enc(a, _x, gamma)) for a, t in zip(rand_a, c)]
+            f0 = [Rand(H) for k in range(K)]
             
         elif act == "Shuffle":            
             (D_A, g_A), _lmbd, A_history = Wrap_A(D_0)
@@ -202,15 +209,14 @@ def new_mp(n, conn, network):
             m = Open(D[m0][1], c, D_INFO[m0], _x, gamma)
             
         else:
-            print "Unknown action", act        
+            print("Unknown action", act)        
         cmd.send('done')
              
-N, M, K=9, 52, 4
+N, M, K = 6, 52, 4
 if __name__=="__main__":    
-    send_command, join = init_players(N, new_mp)       
+    send_command, join = init_players(N, new_mp)
     send_command("Init")
     send_command("Shuffle")
     send_command("Draw", 0, 0)
     send_command("Open", 0)
     send_command("end")
-    join()

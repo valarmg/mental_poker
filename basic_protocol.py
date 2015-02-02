@@ -1,4 +1,5 @@
 from utils import LoadFuncs
+
 def basic_protocol(imp):
     n, N, M, G, H = imp['n'], imp['N'], imp['M'], imp['G'], imp['H']
     send, recv, send_recv, broadcast = LoadFuncs(
@@ -8,9 +9,9 @@ def basic_protocol(imp):
         imp, 'ZKA2_Prove', 'ZKA2_Verify', 'ZKAK_Prove', 'ZKAK_Verify')
     
     def KeyGen():
-        gamma=[]
+        gamma = []
         for n2 in range(N):
-            if n==n2:
+            if n == n2:
                 x = H.random_generator()
                 gamma.append(G.g**x)
                 broadcast(gamma[n])                
@@ -21,7 +22,7 @@ def basic_protocol(imp):
         return gamma, x                
 
     def VExp(x, g, a):        
-        r= g**x
+        r = g**x
         broadcast(r)        
         ZKA2_Prove(x, a, g)
         return r
@@ -33,10 +34,10 @@ def basic_protocol(imp):
 
     def Rand(_G):
         _r = _G.random_index()
-        _g=[broadcast(_G.g**_r) if n==n2 else recv(n2) for n2 in range(N)]
+        _g=[broadcast(_G.g**_r) if n == n2 else recv(n2) for n2 in range(N)]
         t=_G.g
         for n2 in range(N):
-            t = VExp(_r, t, _G.g) if n==n2 else VExp_Verify(n2, t, _G.g, _g[n2])
+            t = VExp(_r, t, _G.g) if n == n2 else VExp_Verify(n2, t, _G.g, _g[n2])
         return t
     
     def Enc(r, _x, gamma):
@@ -45,7 +46,8 @@ def basic_protocol(imp):
             r = VExp(_x, r, G.g) if n==n2 else VExp_Verify(n2, r, G.g, gamma[n2])
         return r
 
-    def Draw(n0, (a,b), c, _x, gamma):                
+    def Draw(n0, xxx_todo_changeme, c, _x, gamma):                
+        (a, b) = xxx_todo_changeme
         r = a
         for n2 in range(N):
             if n2 != n0:                    
@@ -54,12 +56,14 @@ def basic_protocol(imp):
             r2 = r**_x                
             for m in range(M):
                 if r2 == b**c[m]:
-                    print n, "draw", m
+                    print(n, "draw", m)
                     break
             assert m < M
             return (n0, r, m)
         else:
             return (n0, r, -1)
+
+
     def Open(b, c, dinfo, _x, gamma):
         if dinfo is None:
             return None
